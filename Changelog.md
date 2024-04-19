@@ -1,5 +1,11 @@
 ## Changelog
 
+### 05/18/24
+* Arduinoboy to version 1.4.0
+* Converted repo to work with PlatformIO for all supported boards. Unfortunately this broke compatibility with ArduinoIDE, since it uses .cpp and .h files instead of .ino.
+* Refactored all source for readability and consistency.
+* Fixed a few build errors.
+  
 ### 05/19/20
 * Arduinoboy to version 1.3.4
 * Added support for Arduino Mega 2560 and Arduino UNO Wifi
