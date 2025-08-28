@@ -1,11 +1,17 @@
 ## Changelog
 
+### 08/31/25
+* Arduinoboy to version "1.4.1"
+* Created Promicroboy eurorack module. Available in 3U 4HP, or 1U (Intellijel) 22HP. KiCad files, gerbers, and bom are provided. Will upload build photos soon.
+* Rearranged project files to my own preferred format.
+* WIP: manually merging latest commits from [tstirrat](https://github.com/tstirrat/Arduinoboy) and [Chiptune-Anamnesis](https://github.com/Chiptune-Anamnesis/Arduinoboy_Main). not finished, don't try to build the firmware from this commit :)
+
 ### 05/18/24
-* Arduinoboy to version 1.4.0
+* Arduinoboy to version "1.4.0"
 * Converted repo to work with PlatformIO for all supported boards. Unfortunately this broke compatibility with ArduinoIDE, since it uses .cpp and .h files instead of .ino.
 * Refactored all source for readability and consistency.
 * Fixed a few build errors.
-  
+
 ### 05/19/20
 * Arduinoboy to version 1.3.4
 * Added support for Arduino Mega 2560 and Arduino UNO Wifi
@@ -28,7 +34,7 @@
 * Added USB MIDI support for Teensy
 * Updated LSDJ LIVEMAP / SYNCMAP mode. This only works with LSDJ Arduinoboy version 4.8.7 and above. Licensed users can [download it here](http://littlesounddj.com/lsd/latest/full_version/lsdj4_8_7-arduinoboy.zip) Livemap has been removed in favor of stable sync slave mode.
 
-### 06/26/15 
+### 06/26/15
 * Project has been moved to GitHub. mGB has been moved to it's own project [Available here](https://github.com/trash80/mGB)
 
 ### 12/23/11
@@ -60,11 +66,11 @@
 ### 02/02/09
    * mGB to version 1.3.0
      * Rewrote 90% of code into assembly for much faster performance- especially noticeable on DMG.
-     * Changed note behavior. Removed Monophonic note memory to increase performance. 
-     * Envelope does not retrigger if the notes overlap and have the same velocity- Good for arpeggios / broken chords. 
-     * Note off has a slight delay so immediate retrigged notes don't cause "clicking" effect due to turning off the synth. 
+     * Changed note behavior. Removed Monophonic note memory to increase performance.
+     * Envelope does not retrigger if the notes overlap and have the same velocity- Good for arpeggios / broken chords.
+     * Note off has a slight delay so immediate retrigged notes don't cause "clicking" effect due to turning off the synth.
      * Added screen off mode for great signal-to-noise ratio, longer battery life, and better performance on DMG. (To toggle the screen mode hold Select and press A.)
-     * Created back-end routine that prioritizes processes for better performance. 
+     * Created back-end routine that prioritizes processes for better performance.
      * Added 8 "noise" shapes to the Wav synth for more interesting effects.
      * Made Wav pitch sweep stable and changed it so it glitches out at values above 8. :D
 
@@ -75,7 +81,7 @@
     * Fixed small bug with the indicator arrow, it was offset vertically a bit.
     * Fixed bug with unexpected behavior with large PB Ranges
     * PB Range Max is now 48 notes. (hehe)
-    * Octave Shift max is now -2/+3 
+    * Octave Shift max is now -2/+3
     * Added some Octave shift logic. If the current note is greater than what the GB can play due to octave shifting, it will select the lower octave note, so no off key notes will play.
     * Added Gameboy Color fast-cpu mode- better performance with newer Gameboys.
 
@@ -91,11 +97,11 @@
 ### 10/25/08
    * Added Program Change messages to mGB
    * Rewrote MIDI data input for mGB. (Rewrote the function in ASM to make it faster)
-   * Added Controller Priority. While changing parameters on the gameboy itself, MIDI messages will not overwrite your changes while your editing them. This is a good live mode feature 
+   * Added Controller Priority. While changing parameters on the gameboy itself, MIDI messages will not overwrite your changes while your editing them. This is a good live mode feature
    * Arduinoboy code updated yet again for mGB behavior. Arduinoboy release will now always be included in a zip file inside the mGB zip so you know that the version of Arduinoboy thats included with the mGB archive is the one to use.
 
 ### 10/23/08
-   * Found & Fixed various bugs in 1.2.0 
+   * Found & Fixed various bugs in 1.2.0
    * Changed help text. Made it more clear.
 
 ### 10/23/08
@@ -105,6 +111,6 @@
    * Arduinoboy 1.0.3 has better behavior for mGB 1.2.0 but should also work better for old mGB versions as well.
 
 ### 10/20/08
-   * Added interface to mGB. 
+   * Added interface to mGB.
    * Changed WAV CC Parameters
    * Arduinoboy 1.0.2 has better behavior for mGB 1.1.0

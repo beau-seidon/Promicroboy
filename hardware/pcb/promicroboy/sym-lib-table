@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "Arduino")(type "Legacy")(uri "${LOCALREPO}/kicad-lib-arduino/Arduino.lib")(options "")(descr ""))
+)

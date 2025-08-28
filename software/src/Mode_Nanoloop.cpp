@@ -34,7 +34,7 @@ void modeNanoloopSetup()
         usbMIDI.setHandleRealTimeSystem(usbMidiNanoloopRealtimeMessage);
     #endif
 
-    blinkMaxCount=1000;
+    blinkMaxCount = 1000;
     modeNanoloopSync();
 }
 
