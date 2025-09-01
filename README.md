@@ -1,6 +1,8 @@
 # Arduinoboy (b_s)
 ~~Official~~ ArduinoBoy Repository for serial MIDI communication to the Nintendo Gameboy.
 
+![Promicroboy](./other%20resources/build%20photos/front.jpg)
+
 ### The readme below is still based on the original repo, updates coming soon!
 See changelog for more info.
 
