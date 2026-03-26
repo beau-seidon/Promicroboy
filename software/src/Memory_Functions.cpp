@@ -1,6 +1,13 @@
 #include "Memory_Functions.h"
 
 
+boolean checkMemory(void);
+void initMemory(boolean reinit);
+void loadMemory(void);
+void printMemory(void);
+void saveMemory(void);
+void changeTasks(void);
+
 
 boolean checkMemory()
 {
@@ -15,27 +22,6 @@ boolean checkMemory()
     #endif
     return true;
 }
-
-
-
-void changeTasks()
-{
-    midioutByteDelay = memory[MEM_MIDIOUT_BYTE_DELAY] * memory[MEM_MIDIOUT_BYTE_DELAY + 1];
-    midioutBitDelay = memory[MEM_MIDIOUT_BIT_DELAY] * memory[MEM_MIDIOUT_BIT_DELAY + 1];
-}
-
-
-
-void loadMemory()
-{
-    #ifndef USE_DUE
-        for (int m = MEM_MAX; m >= 0; m--) {
-            memory[m] = EEPROM.read(m);
-        }
-    #endif
-    changeTasks();
-}
-
 
 
 void initMemory(boolean reinit)
@@ -58,6 +44,16 @@ void initMemory(boolean reinit)
 }
 
 
+void loadMemory()
+{
+    #ifndef USE_DUE
+        for (int m = MEM_MAX; m >= 0; m--) {
+            memory[m] = EEPROM.read(m);
+        }
+    #endif
+    changeTasks();
+}
+
 
 void printMemory()
 {
@@ -65,7 +61,6 @@ void printMemory()
         serial->println(memory[m], HEX);
     }
 }
-
 
 
 void saveMemory()
@@ -76,4 +71,11 @@ void saveMemory()
         }
         changeTasks();
     #endif
+}
+
+
+void changeTasks()
+{
+    midioutByteDelay = memory[MEM_MIDIOUT_BYTE_DELAY] * memory[MEM_MIDIOUT_BYTE_DELAY + 1];
+    midioutBitDelay = memory[MEM_MIDIOUT_BIT_DELAY] * memory[MEM_MIDIOUT_BIT_DELAY + 1];
 }

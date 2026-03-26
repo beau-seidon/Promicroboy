@@ -1,15 +1,15 @@
 /**************************************************************************
- * Name:    Timothy Lamb                                                  *
- * Email:   trash80@gmail.com                                             *
- ***************************************************************************/
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+ *  Name:   Timothy Lamb                                                  *
+ *  Email:  trash80@gmail.com                                             *
+ **************************************************************************/
+/**************************************************************************
+ *                                                                        *
+ *  This program is free software; you can redistribute it and/or modify  *
+ *  it under the terms of the GNU General Public License as published by  *
+ *  the Free Software Foundation; either version 2 of the License, or     *
+ *  (at your option) any later version.                                   *
+ *                                                                        *
+ **************************************************************************/
 
 #include "Mode_Nanoloop.h"
 
@@ -18,17 +18,18 @@
 #include "Mode.h"
 
 
+void modeNanoloopSetup(void);
 void modeNanoloopSync(void);
 boolean sendTickToNanoloop(boolean state, boolean last_state);
+void usbMidiNanoloopRealtimeMessage(uint8_t message);
 void modeNanoloopUsbMidiReceive(void);
-
 
 
 void modeNanoloopSetup()
 {
-    digitalWrite(pinStatusLed,LOW);
-    pinMode(pinGBClock,OUTPUT);
-    digitalWrite(pinGBClock,HIGH);
+    digitalWrite(pinStatusLed, LOW);
+    pinMode(pinGBClock, OUTPUT);
+    digitalWrite(pinGBClock, HIGH);
 
     #ifdef USE_TEENSY
         usbMIDI.setHandleRealTimeSystem(usbMidiNanoloopRealtimeMessage);
@@ -39,19 +40,18 @@ void modeNanoloopSetup()
 }
 
 
-
 void modeNanoloopSync()
 {
     while (1) {    // Loop forever
         modeNanoloopUsbMidiReceive();
-        if (serial->available()) {                                                                          // If MIDI Byte Availaibleleleiel
-            incomingMidiByte = serial->read();                                                              // Read it
-            if (!checkForProgrammerSysex(incomingMidiByte) && !usbMode) serial->write(incomingMidiByte);    // Send it back to the Midi out
+        if (serial->available()) {                                                                          // if MIDI Byte Availaibleleleiel
+            incomingMidiByte = serial->read();                                                              // read it
+            if (!checkForProgrammerSysex(incomingMidiByte) && !usbMode) serial->write(incomingMidiByte);    // send it back to the Midi out
 
             if (incomingMidiByte & 0x80) {
                 switch (incomingMidiByte) {
-                    case 0xF8:                     // Clock Message Recieved
-                        if (sequencerStarted) {    // Send a clock tick out if the sequencer is running
+                    case midi::Clock:              // clock Message Recieved
+                        if (sequencerStarted) {    // send a clock tick out if the sequencer is running
                             nanoSkipSync = !nanoSkipSync;
                             if (countSyncTime) {
                                 nanoState = sendTickToNanoloop(nanoState, false);
@@ -63,11 +63,11 @@ void modeNanoloopSync()
                             break;
                         }
                         break;
-                    case 0xFA:               // Transport Start Message
-                    case 0xFB:               // Transport Continue Message
+                    case midi::Start:       // Transport Start Message
+                    case midi::Continue:    // Transport Continue Message
                         sequencerStart();
                         break;
-                    case 0xFC:               // Transport Stop Message
+                    case midi::Stop:        // Transport Stop Message
                         sequencerStop();
                         break;
                     default:
@@ -75,11 +75,10 @@ void modeNanoloopSync()
                 }
             }
         }
-        setMode();    // Check if the mode button was depressed
+        setMode();    // check if the mode button was depressed
         updateStatusLight();
     }
 }
-
 
 
 boolean sendTickToNanoloop(boolean state, boolean last_state)
@@ -101,11 +100,10 @@ boolean sendTickToNanoloop(boolean state, boolean last_state)
 }
 
 
-
 void usbMidiNanoloopRealtimeMessage(uint8_t message)
 {
     switch (message) {
-        case 0xF8:
+        case midi::Clock:
             if (sequencerStarted) {
                 nanoSkipSync = !nanoSkipSync;
                 if (countSyncTime) {
@@ -117,16 +115,15 @@ void usbMidiNanoloopRealtimeMessage(uint8_t message)
                 updateVisualSync();
             }
             break;
-        case 0xFA:               // Case: Transport Start Message
-        case 0xFB:               // and Case: Transport Continue Message
-            sequencerStart();    // Start the sequencer
+        case midi::Start:        // case: Transport Start Message
+        case midi::Continue:     // and case: Transport Continue Message
+            sequencerStart();    // start the sequencer
             break;
-        case 0xFC:               // Case: Transport Stop Message
+        case midi::Stop:         // case: Transport Stop Message
             sequencerStop();
             break;
     }
 }
-
 
 
 void modeNanoloopUsbMidiReceive()
@@ -153,7 +150,7 @@ void modeNanoloopUsbMidiReceive()
         }
     #endif
 
-    #ifdef USE_LEONARDO
+    #ifdef HAS_USB_MIDI
         midiEventPacket_t rx;
         do {
             rx = MidiUSB.read();

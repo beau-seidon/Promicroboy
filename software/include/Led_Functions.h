@@ -3,7 +3,6 @@
 #include "Arduinoboy.h"
 
 
-
 void showSelectedMode(void);
 void updateVisualSync(void);
 void updateBlinkLights(void);

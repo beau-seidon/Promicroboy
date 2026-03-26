@@ -3,6 +3,11 @@
 #include "Arduinoboy.h"
 
 
+/***************************************************************************
+* Lets Assign our Arduino Pins .....
+***************************************************************************/
+
+
 #if defined (__MK20DX256__) || defined (__MK20DX128__) || defined (__MKL26Z64__)
 /***************************************************************************
 * Teensy 3.2, Teensy LC
@@ -11,9 +16,10 @@
 * Feel free to change, all related config in is this block.
 * Be sure to compile
 ***************************************************************************/
+    #include <USB-MIDI.h>
+
     #define USE_TEENSY
     #define HAS_USB_MIDI
-    #include <USB-MIDI.h>
 
     #if defined (__MKL26Z64__)
         #define GB_SET(bit_cl, bit_out, bit_in) GPIOB_PDOR = ((bit_in << 3) | (bit_out << 1) | bit_cl)
@@ -34,28 +40,34 @@
 /***************************************************************************
 * Pro Micro (ATmega32U4, with different pin config)
 ***************************************************************************/
-    #define HAS_USB_MIDI
     #include <USB-MIDI.h>
 
+    #define USE_LEONARDO
+    #define HAS_USB_MIDI
+
     #define GB_SET(bit_cl, bit_out, bit_in) PORTF = (PINF & B00011111) | ((bit_cl << 7) | (bit_out << 6) | (bit_in << 5))
-    // ^ The reason for not using digitalWrite is to allign clock and data pins for the GB shift reg.
+    // ^ The reason for not using digitalWrite is to align clock and data pins for the GB shift reg.
     // Pin distribution comes from official Arduino Leonardo documentation
 
-    const int pinGBClock     = A0;    // Analog In 0 - clock out to gameboy
-    const int pinGBSerialOut = A1;    // Analog In 1 - serial data to gameboy
-    const int pinGBSerialIn  = A2;    // Analog In 2 - serial data from gameboy
-    const int pinMidiInputPower = 4; // power pin for midi input opto-isolator
-    const int pinStatusLed = 14; // Status LED
-    const int pinLeds[] = {8,9,7,10,16,14}; // LED Pins
-    const int pinButtonMode = 3; //toggle button for selecting the mode
+    const int pinGBClock = A0;                      // Analog In 0 - clock out to gameboy
+    const int pinGBSerialOut = A1;                  // Analog In 1 - serial data to gameboy
+    const int pinGBSerialIn = A2;                   // Analog In 2 - serial data from gameboy
+    const int pinMidiInputPower = 4;                // power pin for midi input opto-isolator
+    const int pinStatusLed = 14;                    // Status LED
+    const int pinLeds[] = {8, 9, 7, 10, 16, 14};    // LED Pins
+    const int pinButtonMode = 3;                    // toggle button for selecting the mode
+
+    // for the broken Promicroboy pcb: flip A1 and A2 pins, then swap bit_out and bit_in shifts in the GB_SET macro
 
 
 #elif defined (__AVR_ATmega32U4__)
 /***************************************************************************
 * Arduino Leonardo/Yún/Micro (ATmega32U4)
 ***************************************************************************/
-    #define HAS_USB_MIDI
     #include <USB-MIDI.h>
+
+    #define USE_LEONARDO
+    #define HAS_USB_MIDI
 
     #define GB_SET(bit_cl, bit_out, bit_in) PORTF = (PINF & B00011111) | ((bit_cl << 7) | (bit_out << 6) | (bit_in << 5))
     // ^ The reason for not using digitalWrite is to align clock and data pins for the GB shift reg.
@@ -74,10 +86,11 @@
 /***************************************************************************
 * Arduino Due (ATmSAM3X8E)
 ***************************************************************************/
+    #include <digitalWriteFast.h>
+    #include <USB-MIDI.h>
+
     #define USE_DUE
     #define HAS_USB_MIDI
-    #include <USB-MIDI.h>
-    #include <digitalWriteFast.h>
 
     #define GB_SET(bit_cl, bit_out, bit_in) digitalWriteFast(A0, bit_cl); digitalWriteFast(A1, bit_out); digitalWriteFast(A2, bit_in);
     // ^ The reason for not using digitalWrite is to align clock and data pins for the GB shift reg.

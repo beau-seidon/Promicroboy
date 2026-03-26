@@ -3,5 +3,4 @@
 #include "Arduinoboy.h"
 
 
-
 void modeLSDJMasterSyncSetup(void);

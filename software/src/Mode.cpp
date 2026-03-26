@@ -1,19 +1,20 @@
 /**************************************************************************
- * Name:    Timothy Lamb                                                  *
- * Email:   trash80@gmail.com                                             *
- ***************************************************************************/
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+ *  Name:   Timothy Lamb                                                  *
+ *  Email:  trash80@gmail.com                                             *
+ **************************************************************************/
+/**************************************************************************
+ *                                                                        *
+ *  This program is free software; you can redistribute it and/or modify  *
+ *  it under the terms of the GNU General Public License as published by  *
+ *  the Free Software Foundation; either version 2 of the License, or     *
+ *  (at your option) any later version.                                   *
+ *                                                                        *
+ **************************************************************************/
 
 #include "Mode.h"
 
 #include "Led_Functions.h"
+#include "Memory_Functions.h"
 #include "Mode_LSDJ_Keyboard.h"
 #include "Mode_LSDJ_Map.h"
 #include "Mode_LSDJ_MasterSync.h"
@@ -23,11 +24,15 @@
 #include "Mode_Nanoloop.h"
 
 
+void setMode(void);
+void switchMode(void);
+void sequencerStart(void);
+void sequencerStop(void);
 
-/* ***************************************************************************/
-/* "Mode" Functions. Deals with changing the setup of arduino.              */
-/* ***************************************************************************/
 
+/***************************************************************************
+* "Mode" Functions. Deals with changing the setup of arduino.
+***************************************************************************/
 /*
     setMode will check if the push button is depressed, If it is it will
     increment the mode number and make sure its in the
@@ -38,17 +43,16 @@
 void setMode()
 {
     buttonDepressed = digitalRead(pinButtonMode);
-    if (!memory[MEM_FORCE_MODE] && buttonDepressed) {                          // if the button is pressed
-        memory[MEM_MODE]++;                                                    // increment the mode number
-        if (memory[MEM_MODE] > (NUMBER_OF_MODES - 1)) memory[MEM_MODE] = 0;    // if the mode is greater then 6 it will wrap back to 0
+    if (!memory[MEM_FORCE_MODE] && buttonDepressed) {                                 // if the button is pressed
+        memory[MEM_MODE]++;                                                           // increment the mode number
+        if (memory[MEM_MODE] > (NUMBER_OF_MODES - 1)) memory[MEM_MODE] = 0;           // if the mode is greater then 6 it will wrap back to 0
         #ifndef USE_DUE
             if (!memory[MEM_FORCE_MODE]) EEPROM.write(MEM_MODE, memory[MEM_MODE]);    // write mode to eeprom if we arnt forcing a mode in the config
         #endif
         showSelectedMode();    // set the LEDS
-        switchMode();
+        switchMode();          // this is called in Loop() too, but the comment for switchMode says it's only called here. fix? -b_s
     }
 }
-
 
 
 /*
@@ -84,11 +88,9 @@ void switchMode()
 }
 
 
-
-/* ***************************************************************************/
-/* General Global Functions Used in more then one of the modes               */
-/* ***************************************************************************/
-
+/***************************************************************************
+* General Global Functions Used in more then one of the modes
+***************************************************************************/
 /*
     sequencerStart is called when either LSDJ has started to play in master mode,
     or when a MIDI Start or continue command is received in lsdj slave mode.
@@ -102,7 +104,6 @@ void sequencerStart()
     countSyncLightTime = 0;
     switchLight = 0;
 }
-
 
 
 /*

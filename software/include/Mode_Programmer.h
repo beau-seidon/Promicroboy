@@ -3,6 +3,6 @@
 #include "Arduinoboy.h"
 
 
-
 boolean checkForProgrammerSysex(byte sin);
 void blinkSelectedLight(int led);
+void initProgrammerSysexHandlers(void);

@@ -3,15 +3,26 @@
 #include "Mode_Programmer.h"
 
 
+void showSelectedMode(void);
+void updateVisualSync(void);
+void updateBlinkLight(uint8_t light);
+void updateBlinkLights(void);
+void updateStatusLight(void);
+void blinkLight(byte midiMessage, byte midiValue);
+void updateProgrammerLeds(void);
+void updateStatusLed(void);
+void statusLedOn(void);
+void startupSequence(void);
+
 
 /*
-    showSelectedMode1 turns off the last mode led, turns on the new mode led
+    showSelectedMode turns off the last mode led, turns on the new mode led
     and delays for a period of time to reduce jitter behavior from the mode
     changing too fast.
 */
 void showSelectedMode()
 {
-    digitalWrite(pinStatusLed,LOW);
+    digitalWrite(pinStatusLed, LOW);
     for (int m = 0; m < 3; m++) {
         switch (memory[MEM_MODE]) {
             case 0:
@@ -22,7 +33,6 @@ void showSelectedMode()
                 digitalWrite(pinLeds[memory[MEM_MODE]], HIGH);
                 break;
             case 5:
-                digitalWrite(pinStatusLed, HIGH);
                 digitalWrite(pinLeds[0], HIGH);
                 digitalWrite(pinLeds[1], HIGH);
                 break;
@@ -44,16 +54,15 @@ void showSelectedMode()
         digitalWrite(pinLeds[5], LOW);
         delay(100);
     }
-    lastMode = memory[MEM_MODE];
+    lastMode = memory[MEM_MODE];    // i feel like this belongs somewhere else -b_s
     delay(300);
 }
-
 
 
 void updateVisualSync()
 {
     if (!countSyncTime) {
-        if (!blinkSwitch[5]) digitalWrite(pinStatusLed,HIGH);
+        if (!blinkSwitch[5]) digitalWrite(pinStatusLed, HIGH);
         digitalWrite(pinLeds[0], LOW);
         digitalWrite(pinLeds[1], LOW);
         digitalWrite(pinLeds[2], LOW);
@@ -63,12 +72,11 @@ void updateVisualSync()
         blinkSwitchTime[5] = 0;
         countSyncLightTime = 0;
         switchLight++;
-        if (switchLight == 4) switchLight=0;
+        if (switchLight == 4) switchLight = 0;
     }
     countSyncTime++;
-    if (countSyncTime == 24) countSyncTime=0;
+    if (countSyncTime == 24) countSyncTime = 0;
 }
-
 
 
 void updateBlinkLight(uint8_t light)
@@ -84,7 +92,6 @@ void updateBlinkLight(uint8_t light)
 }
 
 
-
 void updateBlinkLights()
 {
     updateBlinkLight(0);
@@ -94,7 +101,6 @@ void updateBlinkLights()
     updateBlinkLight(4);
     updateBlinkLight(5);
 }
-
 
 
 void updateStatusLight()
@@ -110,11 +116,10 @@ void updateStatusLight()
 }
 
 
-
 void blinkLight(byte midiMessage, byte midiValue)
 {
     if (midiValue) {
-        switch (midiMessage) {
+        switch (midiMessage) {    // update to midi.h enum, and condense? -b_s
             case 0x90:
                 if (!blinkSwitch[0]) digitalWrite(pinLeds[0], HIGH);
                 blinkSwitch[0] = 1;
@@ -231,7 +236,6 @@ void blinkLight(byte midiMessage, byte midiValue)
 }
 
 
-
 void updateProgrammerLeds()
 {
     if (miscLedTime == miscLedMaxTime) {
@@ -244,12 +248,11 @@ void updateProgrammerLeds()
             blinkSelectedLight(5);
             miscLedMaxTime = 3000;
         }
-        miscLedTime=0;
+        miscLedTime = 0;
     }
     miscLedTime++;
     updateBlinkLights();
 }
-
 
 
 /*
@@ -263,19 +266,18 @@ void updateStatusLed()
         countStatusLedOn++;                                        // then increment the counter by 1
         if (countStatusLedOn > 3000) {                             // if the counter is pretty high
             countStatusLedOn = 0;                                  // then reset it to zero.
-            digitalWrite(pinStatusLed,LOW);                        // and turn off the status led
+            digitalWrite(pinStatusLed, LOW);                       // and turn off the status led
             statusLedIsOn  = false;                                // and set our "is it on?" to false, cause its off now. ;p
 
         } else if (statusLedBlink && countStatusLedOn == 1) {      // someone told me to blink, because i was already on
-            digitalWrite(pinStatusLed,LOW);                        // so I'll turn off and turn back on later..
+            digitalWrite(pinStatusLed, LOW);                       // so I'll turn off and turn back on later..
 
         } else if (statusLedBlink && countStatusLedOn > 1000) {    // Now that I've waited long enough I'll finish my blink.
             statusLedBlink = false;                                // Turn off the issued blink
-            digitalWrite(pinStatusLed,HIGH);                       // ...and finally turn back on.
+            digitalWrite(pinStatusLed, HIGH);                      // ...and finally turn back on.
         }
     }
 }
-
 
 
 /*
@@ -286,13 +288,12 @@ void updateStatusLed()
 void statusLedOn()
 {
     if (statusLedIsOn) {
-        statusLedBlink = true;          // Make it blink even though its already on
+        statusLedBlink = true;           // Make it blink even though its already on
     }
-    statusLedIsOn = true;               // This is the flag the updator function looks for to know if its ok to increment the timer and wait to turn off the led
-    countStatusLedOn = 0;               // Reset the timer
-    digitalWrite(pinStatusLed,HIGH);    // Turn on the led
+    statusLedIsOn = true;                // This is the flag the updator function looks for to know if its ok to increment the timer and wait to turn off the led
+    countStatusLedOn = 0;                // Reset the timer
+    digitalWrite(pinStatusLed, HIGH);    // Turn on the led
 }
-
 
 
 /* cute startup sequence */

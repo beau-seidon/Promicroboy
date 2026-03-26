@@ -1,15 +1,15 @@
 /**************************************************************************
- * Name:    Timothy Lamb                                                  *
- * Email:   trash80@gmail.com                                             *
- ***************************************************************************/
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+ *  Name:   Timothy Lamb                                                  *
+ *  Email:  trash80@gmail.com                                             *
+ **************************************************************************/
+/**************************************************************************
+ *                                                                        *
+ *  This program is free software; you can redistribute it and/or modify  *
+ *  it under the terms of the GNU General Public License as published by  *
+ *  the Free Software Foundation; either version 2 of the License, or     *
+ *  (at your option) any later version.                                   *
+ *                                                                        *
+ **************************************************************************/
 
 #include "Mode_LSDJ_Map.h"
 
@@ -20,15 +20,14 @@
 #include "UsbMidi.h"
 
 
+void modeLSDJMapSetup(void);
 void modeLSDJMap(void);
 void setMapByte(uint8_t b, boolean usb);
 void setMapQueueMessage(uint8_t m, uint8_t wait);
 void resetMapCue(void);
 void checkMapQueue(void);
 void usbMidiLSDJMapRealtimeMessage(uint8_t message);
-void usbMidiSendRTMessage(uint8_t b);
 void modeLSDJMapUsbMidiReceive(void);
-
 
 
 void modeLSDJMapSetup()
@@ -44,30 +43,29 @@ void modeLSDJMapSetup()
 }
 
 
-
 void modeLSDJMap()
 {
-    while (1) {    // Loop forever
+    while (1) {    // loop forever
         modeLSDJMapUsbMidiReceive();
         checkMapQueue();
 
-        if (serial->available()) {                // If MIDI Byte Availaibleleleiel
-            incomingMidiByte = serial->read();    // Read it
+        if (serial->available()) {                // if MIDI Byte Availaibleleleiel
+            incomingMidiByte = serial->read();    // read it
 
             checkForProgrammerSysex(incomingMidiByte);
 
-            if (incomingMidiByte & 0x80) {    // If we have received a MIDI Status Byte
-                switch (incomingMidiByte) {
+            if (incomingMidiByte & 0x80) {     // if we have received a MIDI Status Byte
+                switch (incomingMidiByte) {    // update cases with midi.h enum -b_s
                     case 0xF8:
                         setMapByte(0xFF, false);
                         usbMidiSendRTMessage(incomingMidiByte);
                         break;
-                    case 0xFA:                                     // Case: Transport Start Message
-                    case 0xFB:                                     // and Case: Transport Continue Message
-                        sequencerStart();                          // Start the sequencer
+                    case 0xFA:                                     // case: Transport Start Message
+                    case 0xFB:                                     // and case: Transport Continue Message
+                        sequencerStart();                          // start the sequencer
                         usbMidiSendRTMessage(incomingMidiByte);
                         break;
-                    case 0xFC:                                     // Case: Transport Stop Message
+                    case 0xFC:                                     // case: Transport Stop Message
                         sequencerStop();
                         setMapByte(0xFE, false);
                         usbMidiSendRTMessage(incomingMidiByte);
@@ -109,14 +107,13 @@ void modeLSDJMap()
             }
 
         } else {
-            setMode();    // Check if the mode button was depressed
+            setMode();    // check if the mode button was depressed
             updateStatusLight();
             checkMapQueue();
             updateBlinkLights();
         }
     }
 }
-
 
 
 void setMapByte(uint8_t b, boolean usb)
@@ -145,7 +142,6 @@ void setMapByte(uint8_t b, boolean usb)
 }
 
 
-
 void setMapQueueMessage(uint8_t m, uint8_t wait)
 {
     if (mapQueueMessage == -1 || mapQueueMessage == 0xFF) {
@@ -155,12 +151,10 @@ void setMapQueueMessage(uint8_t m, uint8_t wait)
 }
 
 
-
 void resetMapCue()
 {
     mapQueueMessage = -1;
 }
-
 
 
 void checkMapQueue()
@@ -170,7 +164,7 @@ void checkMapQueue()
             sendByteToGameboy(mapQueueMessage);
         } else {
             if (mapQueueMessage == 0xFE || mapCurrentRow == mapQueueMessage) {
-                // Only kill playback if the row is the last one that's been played.
+                // only kill playback if the row is the last one that's been played.
                 mapCurrentRow = -1;
                 sendByteToGameboy(0xFE);
             }
@@ -181,25 +175,23 @@ void checkMapQueue()
 }
 
 
-
 void usbMidiLSDJMapRealtimeMessage(uint8_t message)
 {
-    switch (message) {
+    switch (message) {    // update cases with midi.h enum -b_s
         case 0xF8:
             setMapByte(0xFF, true);
         break;
-        case 0xFA:               // Case: Transport Start Message
-        case 0xFB:               // and Case: Transport Continue Message
+        case 0xFA:               // case: Transport Start Message
+        case 0xFB:               // and case: Transport Continue Message
             resetMapCue();
-            sequencerStart();    // Start the sequencer
+            sequencerStart();    // start the sequencer
         break;
-        case 0xFC:               // Case: Transport Stop Message
-            sequencerStop();     // Stop the sequencer
+        case 0xFC:               // case: Transport Stop Message
+            sequencerStop();     // stop the sequencer
             setMapByte(0xFE, true);
         break;
     }
 }
-
 
 
 void modeLSDJMapUsbMidiReceive()
@@ -211,7 +203,7 @@ void modeLSDJMapUsbMidiReceive()
             if (ch != memory[MEM_LIVEMAP_CH] && ch != (memory[MEM_LIVEMAP_CH] + 1)) {
                 continue;
             }
-            switch (usbMIDI.getType()) {
+            switch (usbMIDI.getType()) {    // update cases with midi.h enum -b_s
                 case 0x80:    // note off
                     setMapByte(0xFE, true);
                 break;
@@ -242,19 +234,16 @@ void modeLSDJMapUsbMidiReceive()
             rx = MidiUSB.read();
             usbMidiLSDJMapRealtimeMessage(rx.byte1);
             uint8_t ch = rx.byte1 & 0x0F;
-            if (ch != memory[MEM_LIVEMAP_CH] && ch != (memory[MEM_LIVEMAP_CH] + 1)) {
-                continue;
-            }
-            switch (rx.header) {
+            if (ch != memory[MEM_LIVEMAP_CH] && ch != (memory[MEM_LIVEMAP_CH] + 1)) continue;
+            switch (rx.header) {    // update cases with midi.h enum -b_s
                 case 0x08:    // note off
                     setMapByte(0xFE, true);
                     break;
                 case 0x09:    // note on
-                    if (ch == (memory[MEM_LIVEMAP_CH] + 1)) {
+                    if (ch == (memory[MEM_LIVEMAP_CH] + 1))
                         setMapByte(128 + rx.byte2, true);
-                    } else {
+                    else
                         setMapByte(rx.byte2, true);
-                    }
                     break;
             }
         } while (rx.header != 0);
