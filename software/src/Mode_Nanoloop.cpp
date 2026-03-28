@@ -31,11 +31,11 @@ void modeNanoloopSetup()
     pinMode(pinGBClock, OUTPUT);
     digitalWrite(pinGBClock, HIGH);
 
+    blinkMaxCount = 1000;
     #ifdef USE_TEENSY
         usbMIDI.setHandleRealTimeSystem(usbMidiNanoloopRealtimeMessage);
     #endif
 
-    blinkMaxCount = 1000;
     modeNanoloopSync();
 }
 
@@ -43,6 +43,8 @@ void modeNanoloopSetup()
 void modeNanoloopSync()
 {
     while (1) {    // Loop forever
+        setMode();    // check if the mode button was depressed
+
         modeNanoloopUsbMidiReceive();
         if (serial->available()) {                                                                          // if MIDI Byte Availaibleleleiel
             incomingMidiByte = serial->read();                                                              // read it
@@ -75,7 +77,7 @@ void modeNanoloopSync()
                 }
             }
         }
-        setMode();    // check if the mode button was depressed
+
         updateStatusLight();
     }
 }

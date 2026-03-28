@@ -35,17 +35,21 @@ void modeLSDJMapSetup()
     digitalWrite(pinStatusLed, LOW);
     pinMode(pinGBClock, OUTPUT);
     digitalWrite(pinGBClock, HIGH);
+
+    blinkMaxCount = 1000;
     #ifdef USE_TEENSY
         usbMIDI.setHandleRealTimeSystem(usbMidiLSDJMapRealtimeMessage);
     #endif
-    blinkMaxCount = 1000;
+
     modeLSDJMap();
 }
 
 
 void modeLSDJMap()
 {
-    while (1) {    // loop forever
+    while (1) {
+        setMode();    // check if the mode button was depressed
+
         modeLSDJMapUsbMidiReceive();
         checkMapQueue();
 
@@ -107,7 +111,6 @@ void modeLSDJMap()
             }
 
         } else {
-            setMode();    // check if the mode button was depressed
             updateStatusLight();
             checkMapQueue();
             updateBlinkLights();

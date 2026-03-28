@@ -54,8 +54,6 @@ void showSelectedMode()
         digitalWrite(pinLeds[5], LOW);
         delay(100);
     }
-    lastMode = memory[MEM_MODE];    // i feel like this belongs somewhere else -b_s
-    delay(300);
 }
 
 

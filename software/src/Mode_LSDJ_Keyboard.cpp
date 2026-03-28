@@ -37,16 +37,15 @@ void modeLSDJKeyboardSetup()
     digitalWrite(pinStatusLed, LOW);
     pinMode(pinGBClock, OUTPUT);
     digitalWrite(pinGBClock, HIGH);
+
     blinkMaxCount = 1000;
-
     // the stuff below makes sure the code is in the same state as LSDJ on reset / restart, mode switched, etc.
-    for (int rst = 0; rst < 5; rst++) sendKeyboardByteToGameboy(keyboardOctDn);     // return lsdj to the first octave
-    for (int rst = 0; rst < 41; rst++) sendKeyboardByteToGameboy(keyboardInsDn);    // return lsdj to the first instrument
-
     keyboardCurrentOct = 0;    // set our current octave to 0.
     keyboardLastOct = 0;       // set our last octave to 0.
     keyboardCurrentIns = 0;    // set out current instrument to 0.
     keyboardLastIns = 0;       // set out last used instrument to 0.
+    for (int rst = 0; rst < 5; rst++) sendKeyboardByteToGameboy(keyboardOctDn);     // return lsdj to the first octave
+    for (int rst = 0; rst < 41; rst++) sendKeyboardByteToGameboy(keyboardInsDn);    // return lsdj to the first instrument
 
     modeLSDJKeyboard();        // ...and start the fun
 }
@@ -55,11 +54,12 @@ void modeLSDJKeyboardSetup()
 void modeLSDJKeyboard()
 {
     while (1) {
+        setMode();    // check if the mode button was depressed
+
         modeLSDJKeyboardUsbMidiReceive();
         modeLSDJKeyboardSerialMidiReceive();
 
         updateStatusLed();    // update our status blinker
-        setMode();            // check if mode button was depressed
     }
 }
 

@@ -36,7 +36,7 @@ void sequencerStop(void);
 /*
     setMode will check if the push button is depressed, If it is it will
     increment the mode number and make sure its in the
-    range 0 to 6 by mod (%). It will then write the mode to memory,
+    range 0 to 6. It will then write the mode to memory,
     set the leds to display the mode, and switch the code over to the
     right function.
 */
@@ -49,8 +49,11 @@ void setMode()
         #ifndef USE_DUE
             if (!memory[MEM_FORCE_MODE]) EEPROM.write(MEM_MODE, memory[MEM_MODE]);    // write mode to eeprom if we arnt forcing a mode in the config
         #endif
+
         showSelectedMode();    // set the LEDS
-        switchMode();          // this is called in Loop() too, but the comment for switchMode says it's only called here. fix? -b_s
+        lastMode = memory[MEM_MODE];
+
+        switchMode();
     }
 }
 

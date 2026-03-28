@@ -36,7 +36,9 @@ void modeMidiGbSetup()
     digitalWrite(pinStatusLed, LOW);
     pinMode(pinGBClock, OUTPUT);
     digitalWrite(pinGBClock, HIGH);
+
     blinkMaxCount = 1000;
+
     modeMidiGb();
 }
 
@@ -44,9 +46,10 @@ void modeMidiGbSetup()
 void modeMidiGb()
 {
     while (1) {
+        setMode();    // check if the mode button was depressed
+
         modeMidiGbUsbMidiReceive();
         if (!modeMidiGbSerialReceive()) {
-            setMode();    // check if mode button was depressed
             updateBlinkLights();
             updateStatusLed();
         }

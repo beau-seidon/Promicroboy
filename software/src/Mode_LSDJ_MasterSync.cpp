@@ -29,8 +29,10 @@ void modeLSDJMasterSyncSetup()
 {
     digitalWrite(pinStatusLed, LOW);
     pinMode(pinGBClock, INPUT);
-    countSyncTime = 0;
+
     blinkMaxCount = 1000;
+    countSyncTime = 0;
+
     modeLSDJMasterSync();
 }
 
@@ -38,6 +40,8 @@ void modeLSDJMasterSyncSetup()
 void modeLSDJMasterSync()
 {
     while (1) {
+        setMode();    // check if the mode button was depressed
+
         #ifdef USE_TEENSY
             while (usbMIDI.read()) ;
         #endif
@@ -62,7 +66,6 @@ void modeLSDJMasterSync()
 
             sendMidiClockSlaveFromLSDJ();             // send the clock & start offset data to midi
         }
-        setMode();
     }
 }
 

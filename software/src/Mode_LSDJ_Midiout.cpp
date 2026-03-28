@@ -36,11 +36,13 @@ void modeLSDJMidioutSetup()
     digitalWrite(pinStatusLed, LOW);
     pinMode(pinGBClock, OUTPUT);
     digitalWrite(pinGBClock, HIGH);
+
+    blinkMaxCount = 60;
     countGbClockTicks = 0;
     lastMidiData[0] = -1;
     lastMidiData[1] = -1;
     midiValueMode = false;
-    blinkMaxCount = 60;
+
     modeLSDJMidiout();
 }
 
@@ -48,6 +50,8 @@ void modeLSDJMidioutSetup()
 void modeLSDJMidiout()
 {
     while (1) {
+        setMode();    // check if the mode button was depressed
+
         if (getIncommingSlaveByte()) {
             if (incomingMidiByte > 0x6f) {
                 switch (incomingMidiByte) {    // update cases to midi.h enum -b_s
@@ -71,7 +75,6 @@ void modeLSDJMidiout()
                 midioutDoAction(midiData[0], incomingMidiByte);
             }
         } else {
-            setMode();    // check if mode button was depressed
             updateBlinkLights();
             sMIDI.read();    // read from MIDI to detect programmer messages
             #ifdef HAS_USB_MIDI

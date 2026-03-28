@@ -398,6 +398,5 @@ void setup()
 
 void loop ()    // Main Loop, which we don't use to be able to isolate each mode into its own setup and loop functions
 {
-    setMode();
     switchMode();
 }

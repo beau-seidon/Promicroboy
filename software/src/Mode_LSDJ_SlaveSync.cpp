@@ -33,7 +33,9 @@ void modeLSDJSlaveSyncSetup()
     digitalWrite(pinStatusLed, LOW);
     pinMode(pinGBClock, OUTPUT);
     digitalWrite(pinGBClock, HIGH);
+
     blinkMaxCount = 1000;
+
     modeLSDJSlaveSync();
 }
 
@@ -41,9 +43,11 @@ void modeLSDJSlaveSyncSetup()
 void modeLSDJSlaveSync()
 {
     while (1) {
+        setMode();    // check if the mode button was depressed
+
         modeLSDJSlaveSyncUsbMidiReceive();
         modeLSDJSlaveSyncSerialMidiReceive();
-        setMode();    // check if the mode button was depressed
+
         updateStatusLight();
     }
 }
